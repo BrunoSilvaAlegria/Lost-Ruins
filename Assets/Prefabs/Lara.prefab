@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 472974879975196823}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: AttackPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5175861764838006848}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: WallCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6245443838557046897}
   - component: {fileID: 2603817555460671934}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Bow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155,7 +155,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3505595515335784472}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,12 +190,14 @@ GameObject:
   - component: {fileID: 5894637145666386575}
   - component: {fileID: 1117972375972971110}
   - component: {fileID: 6685607396175283605}
+  - component: {fileID: 8448682652178586388}
   - component: {fileID: 6160340122002900680}
   - component: {fileID: 2855696951948459123}
   - component: {fileID: 6714827828820309694}
   - component: {fileID: 4970023555084177631}
   - component: {fileID: 4185774446269935144}
-  m_Layer: 7
+  - component: {fileID: 5685905307768390234}
+  m_Layer: 8
   m_Name: Lara
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -366,6 +368,41 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 19, y: 30.293497}
   m_EdgeRadius: 0
+--- !u!70 &8448682652178586388
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8970758743251708717}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.52508926, y: -0.78339005}
+  m_Size: {x: 18.6489, y: 30.43322}
+  m_Direction: 0
 --- !u!114 &6160340122002900680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,6 +415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d0e31036aeb2bf479e7d6941481498b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hurtSnd: {fileID: 0}
   moveSpeed: 100
   jumpSpeed: 200
   groundCheck: {fileID: 3505595515335784472}
@@ -385,6 +423,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   groundRadius: 0.2
+  groundCollider: {fileID: 6685607396175283605}
+  airCollider: {fileID: 8448682652178586388}
   wallJumpTime: 0.2
   wallSlideSpeed: 0.3
   wallDistance: 10
@@ -393,16 +433,21 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   jumpTime: 0
+  hzInput: 0
+  isFacingRight: 1
   meleeDamage: 2
   attackPoint: {fileID: 472974879975196823}
   attackRange: 13.7
   attackDamage: 1
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 256
-  bow: {fileID: 6245443838557046897}
-  arrow: {fileID: 7124620986398570724, guid: 807be5bfe3ab3294bbef66ac510ad0f2, type: 3}
+    m_Bits: 512
+  bowPos: {fileID: 6245443838557046897}
+  arrowPrefab: {fileID: 4204733961700766059, guid: 807be5bfe3ab3294bbef66ac510ad0f2, type: 3}
   blinkDuration: 0.1
+  velocityPerDamage: 100
+  maxKnockbackVelocity: 200
+  timeScaleDuration: 0.1
 --- !u!114 &2855696951948459123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428,7 +473,7 @@ DistanceJoint2D:
   m_Enabled: 1
   serializedVersion: 4
   m_EnableCollision: 1
-  m_ConnectedRigidBody: {fileID: 0}
+  m_ConnectedRigidBody: {fileID: 1117972375972971110}
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_BreakAction: 3
@@ -557,3 +602,23 @@ MonoBehaviour:
   _faction: 0
   maxHealth: 6
   invulnerabilityDuration: 1
+--- !u!114 &5685905307768390234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8970758743251708717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d8bf6c5dca10c419603963452267e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  faction: 0
+  damage: 1
+  destroyOnDamage: 0
+  localInvulnerability: 0
+  damageDelayInFrames: 0
+  directionalAttack: 0
+  normalizedDirection: {x: 0, y: 1}
+  angleTolerance: 45
