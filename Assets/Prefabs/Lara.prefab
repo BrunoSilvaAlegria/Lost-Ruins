@@ -71,7 +71,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6245443838557046897}
-  - component: {fileID: 2603817555460671934}
   m_Layer: 8
   m_Name: Bow
   m_TagString: Untagged
@@ -94,58 +93,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7574912411720967696}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &2603817555460671934
-SpriteRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2632653085763564749}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
 --- !u!1 &7393148937623962349
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,6 +142,7 @@ GameObject:
   - component: {fileID: 2855696951948459123}
   - component: {fileID: 6714827828820309694}
   - component: {fileID: 4970023555084177631}
+  - component: {fileID: -296361453773103833}
   - component: {fileID: 4185774446269935144}
   - component: {fileID: 5685905307768390234}
   m_Layer: 8
@@ -416,7 +364,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hurtSnd: {fileID: 0}
-  moveSpeed: 100
+  moveSpeed: 200
   jumpSpeed: 200
   groundCheck: {fileID: 3505595515335784472}
   groundLayer:
@@ -433,20 +381,17 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   jumpTime: 0
-  hzInput: 0
-  isFacingRight: 1
   meleeDamage: 2
   attackPoint: {fileID: 472974879975196823}
-  attackRange: 13.7
-  attackDamage: 1
+  attackRange: 2
   enemyLayer:
     serializedVersion: 2
     m_Bits: 512
   bowPos: {fileID: 6245443838557046897}
   arrowPrefab: {fileID: 4204733961700766059, guid: 807be5bfe3ab3294bbef66ac510ad0f2, type: 3}
   blinkDuration: 0.1
-  velocityPerDamage: 100
-  maxKnockbackVelocity: 200
+  velocityPerDamage: 50
+  maxKnockbackVelocity: 50
   timeScaleDuration: 0.1
 --- !u!114 &2855696951948459123
 MonoBehaviour:
@@ -481,7 +426,7 @@ DistanceJoint2D:
   m_Anchor: {x: 0, y: 0}
   m_ConnectedAnchor: {x: 0, y: 0}
   m_AutoConfigureDistance: 1
-  m_Distance: 15.84
+  m_Distance: 0.005
   m_MaxDistanceOnly: 0
 --- !u!120 &4970023555084177631
 LineRenderer:
@@ -503,8 +448,7 @@ LineRenderer:
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 3db947773d0a89149ba9fafbc4ee19b3, type: 2}
+  m_Materials: []
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -548,8 +492,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.9622642, g: 0.077162705, b: 0.077162705, a: 1}
-      key1: {r: 0.9339623, g: 0.92246616, b: 0.083704144, a: 1}
+      key0: {r: 0.3773585, g: 0.24997592, b: 0.10145959, a: 1}
+      key1: {r: 0.3773585, g: 0.24997592, b: 0.10145959, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -573,7 +517,7 @@ LineRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
@@ -587,6 +531,18 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &-296361453773103833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8970758743251708717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33956b24a88d8c84ea2d9b3229411bca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4185774446269935144
 MonoBehaviour:
   m_ObjectHideFlags: 0

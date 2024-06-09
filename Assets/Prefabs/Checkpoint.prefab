@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8683957655770397798}
   - component: {fileID: 8810772741322662156}
   - component: {fileID: 1672887548554861968}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Off
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -865,7 +865,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -4843,7 +4843,7 @@ GameObject:
   - component: {fileID: 5672578762029097943}
   - component: {fileID: 3853243773628128802}
   - component: {fileID: 4538005878578133666}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Checkpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5035,7 +5035,7 @@ GameObject:
   - component: {fileID: 9128509910306331902}
   - component: {fileID: 1658202749439857503}
   - component: {fileID: 8938769277861136095}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: On
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5889,7 +5889,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
