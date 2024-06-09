@@ -1,59 +1,122 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Enemy : MonoBehaviour
 {
-    //ATTACK
-    [Header("Enemy Shots")]
-    [SerializeField] private GameObject bullet;
-    [SerializeField] private Transform bulletPos;
+    //AUDIO
+    [Header("Audio")]
+    [SerializeField] private AudioSource hurtSnd;
 
-    private float timer;
+    //INVULNERABILITY 
+    [Header("Invulnerability")]
+    [SerializeField] private float blinkDuration = 0.1f;
+    private float blinkTimer;
+    private bool isGrounded = false;
+
+    //KNOCKBACK
+    [Header("Knockback")]
+    [SerializeField] private float velocityPerDamage = 100.0f;
+    [SerializeField] private float maxKnockbackVelocity = 200.0f;
+    [SerializeField] private float timeScaleDuration = 0.1f;
+
+    private Rigidbody2D rb;
+    private SpriteRenderer sr;
     private HealthSystem health;
     private Animator anim;
-
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
+        sr = GetComponent<SpriteRenderer>();
+        health = GetComponent<HealthSystem>();
+        anim = GetComponent<Animator>();
 
-    }
-
-    private void Update()
-    {
-        timer += Time.deltaTime;
-        if (timer > 2) 
+        if (health != null)
         {
-            timer = 0; 
-            Shoot();
+            health.onDamage += EnemyTookDamage;
+            health.onInvulnerabilityToggle += ToggleInvulnerability;
+            health.onDeath += EnemyDied;
         }
     }
 
-    void Shoot()
+    private void OnDestroy()
     {
-        Instantiate(bullet, bulletPos.position, Quaternion.identity);
+        if (health)
+        {
+            health.onInvulnerabilityToggle -= ToggleInvulnerability;
+            health.onDeath -= EnemyDied;
+        }
     }
 
-    public void TakeDamage(int dmg)
+    void ToggleInvulnerability(bool active)
     {
-        //Enemy takes damage, reduces health
-        //dmg = 
-        //currentHealth -= dmg;
-
-        anim.SetTrigger("HURT"); //Damage animation
-
-        //if (currentHealth <= 0) Die();
+        if (active)
+        {
+            blinkTimer = blinkDuration;
+        }
+        else
+        {
+            blinkTimer = 0;
+            sr.enabled = true;
+        }
     }
 
-    void Die()
+    void EnemyDied()
     {
-        Debug.Log("Enemy dead");
+        StartCoroutine(EnemyDiedCR());
+    }
 
-        //Death animation
-        anim.SetBool("DEATH", true);
+    IEnumerator EnemyDiedCR()
+    {
+        anim.SetTrigger("DEAD"); //Death animation
 
-        //Disable enemy
+        yield return new WaitForSeconds(1.5f);
+        
+        /*float timer = 0f;
+        while (timer < 1.5f)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }*/
+        Destroy(gameObject);
         this.enabled = false;
+    }
+
+    void EnemyTookDamage(int damage, Transform damageSource)
+    {
+        if (health.isDead) return;
+
+        StartCoroutine(EnemyTookDamageCR(damage, damageSource));
+    }
+
+    IEnumerator EnemyTookDamageCR(int damage, Transform damageSource)
+    {
+        // Passo 0: Tocar o som
+        if (hurtSnd != null) hurtSnd.Play();
+        //Passo 0.5: Correr a animação
+        anim.SetTrigger("HURT");
+        // Passo 1: Mudar a velocidade para o knockback
+        float velocityX = Mathf.Clamp(damage * velocityPerDamage, 0.0f, maxKnockbackVelocity);
+        float velocityY = velocityX * 2.0f;
+        if (damageSource.position.x > transform.position.x) velocityX = -velocityX;
+        rb.velocity = new Vector2(velocityX, velocityY);
+        // Passo 2: Stutter
+        if (timeScaleDuration > 0)
+        {
+            Time.timeScale = 0.001f;
+            yield return new WaitForSecondsRealtime(timeScaleDuration);
+            Time.timeScale = 1.0f;
+        }
+        // Passo 3: Esperar X tempo
+        //yield return new WaitForSeconds(knockbackTime);
+
+        yield return new WaitForSeconds(0.1f);
+        while (isGrounded)
+        {
+            yield return null;
+        }
     }
 }
