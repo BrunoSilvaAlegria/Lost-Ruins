@@ -11,17 +11,17 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Background
   - Water
   - UI
   - Ground
   - Wall
   - Player
   - Enemy
-  - Bullet
-  - 
-  - 
-  - 
+  - Checkpoints
+  - Arrows
+  - Bullets
+  - Items
   - 
   - 
   - 
