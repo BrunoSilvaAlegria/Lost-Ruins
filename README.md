@@ -12,3 +12,4 @@
 | 12/5 | Bruno Alegria | Add Task List |
 | 14/5 | Bruno Alegria | Update Lost Ruins files |
 | 05/06 | Bruno Alegria | Upload new code-only scripts and add new README file |
+| 09/06 | Bruno Alegria | Upload new Assets and modify Project Settings |
