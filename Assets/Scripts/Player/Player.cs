@@ -1,11 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 //using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class Player : MonoBehaviour
 {
     enum WallType { Unknown, Left, Right };
+
+    //AUDIO
+    [Header("Audio")]
+    [SerializeField] private AudioSource hurtSnd;
+
     //MOVEMENT
     [Header("Horizontal Movement")]
     [SerializeField] private float moveSpeed = 10f;
@@ -17,6 +23,8 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeReference] private float groundRadius = 0.2f;
+    [SerializeField] private Collider2D groundCollider;
+    [SerializeField] private Collider2D airCollider;
     private bool isGrounded = false;
 
     [Header("Wall Jump")]
@@ -25,23 +33,24 @@ public class Player : MonoBehaviour
     [SerializeField] private float wallDistance = 0.55f;
     [SerializeField] private Transform wallCheck;
     [SerializeField] private LayerMask wallLayer;
+    [SerializeField] private float jumpTime;
+
     private bool isWallSliding = false;
     private bool canWallJump = true;
     private string previousJumpedWall = "";
     RaycastHit2D wallCheckHit;
 
-    [SerializeField] private float jumpTime;
-
     private float hzInput;
-
     private bool isFacingRight = true;
+    private bool collisionEnable = true;
+
+    private bool animStopper = true;
 
     //COMBAT
     [Header("Melee Attack")]
-    [SerializeField] public int meleeDamage = 2;
+    [SerializeField] private int meleeDamage = 2;
     [SerializeField] private Transform attackPoint;
-    [SerializeField] private float attackRange = 0.5f;
-    [SerializeField] private int attackDamage = 2;
+    [SerializeField] private float attackRange = 1.5f;
     [SerializeField] LayerMask enemyLayer;
 
     [Header("Arrows Shooting")]
@@ -49,16 +58,22 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject arrowPrefab;
 
 
-    //Invulnerability
+    //INVULNERABILITY 
     [Header("Invulnerability")]
     [SerializeField] private float blinkDuration = 0.1f;
     private float blinkTimer;
 
+    //KNOCKBACK
+    [Header("Knockback")]
+    [SerializeField] private float velocityPerDamage = 100.0f;
+    [SerializeField] private float maxKnockbackVelocity = 200.0f;
+    [SerializeField] private float timeScaleDuration = 0.1f;
+
+
+    //private List<int> arrowAmount = new List<int>(5);
+    //private bool arrowShot = false;
+    private Scene currentScene;
     private HealthSystem health;
-
-    private List<int> arrowAmount = new List<int>(5);
-    private bool arrowShot = false;
-
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private Animator anim;
@@ -71,6 +86,11 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
         health = GetComponent<HealthSystem>();
 
+    }
+
+    private void Start()
+    {
+        health.onDamage += PlayerTookDamage;
         health.onInvulnerabilityToggle += ToggleInvulnerability;
         health.onDeath += PlayerDied;
     }
@@ -99,12 +119,61 @@ public class Player : MonoBehaviour
 
     void PlayerDied()
     {
+        StartCoroutine(PlayerDiedCR());
+    }
+
+    IEnumerator PlayerDiedCR()
+    {
+        collisionEnable = false;
+        anim.SetTrigger("LARA DEAD");
+
+        float timer = 0f;
+        while(timer < 1.5f)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
         Destroy(gameObject);
+
+    }
+
+    void PlayerTookDamage(int damage, Transform damageSource)
+    {
+        if (health.isDead) return;
+
+        StartCoroutine(PlayerTookDamageCR(damage, damageSource));
+    }
+
+    IEnumerator PlayerTookDamageCR(int damage, Transform damageSource)
+    {
+        // Passo 0: Tocar o som
+        if (hurtSnd != null) hurtSnd.Play();
+        //Passo 0.5: Correr a animação
+        anim.SetTrigger("LARA HURT");
+        // Passo 1: Mudar a velocidade para o knockback
+        float velocityX = Mathf.Clamp(damage * velocityPerDamage, 0.0f, maxKnockbackVelocity);
+        float velocityY = velocityX * 2.0f;
+        if (damageSource.position.x > transform.position.x) velocityX = -velocityX;
+        rb.velocity = new Vector2(velocityX, velocityY);
+        // Passo 2: Stutter
+        if (timeScaleDuration > 0)
+        {
+            Time.timeScale = 0.001f;
+            yield return new WaitForSecondsRealtime(timeScaleDuration);
+            Time.timeScale = 1.0f;
+        }
+        // Passo 3: Esperar X tempo
+        //yield return new WaitForSeconds(knockbackTime);
+
+        yield return new WaitForSeconds(0.1f);
+        while (isGrounded)
+        {
+            yield return null;
+        }
     }
 
     private void Update()
-    {
-        if (isGrounded && Input.GetButtonDown("Jump") || isWallSliding && Input.GetButtonDown("Jump")) Jump();
+    {   
         if (blinkTimer > 0)
         {
             blinkTimer -= Time.deltaTime;
@@ -114,7 +183,13 @@ public class Player : MonoBehaviour
                 blinkTimer = blinkDuration;
             }
         }
-        if (Input.GetKeyDown(KeyCode.Mouse0)) BowShot();
+
+        airCollider.enabled = !isGrounded && collisionEnable;
+        groundCollider.enabled = isGrounded && collisionEnable;
+
+        if (isGrounded && Input.GetButtonDown("Jump") || isWallSliding && Input.GetButtonDown("Jump")) Jump();
+        if (Input.GetKeyDown(KeyCode.K)) BowShot();
+        if (Input.GetKeyDown(KeyCode.J)) MeleeAttack();
 
     }
 
@@ -179,18 +254,13 @@ public class Player : MonoBehaviour
 
         //SHOOTING
 
-        if (arrowShot)
+        /*if (arrowShot)
         {
             foreach (int arrow in arrowAmount)
             {
                 arrowAmount.RemoveAt(arrow);
             }
-        }
-
-
-        //MELEE
-
-        if (Input.GetKeyDown(KeyCode.E)) MeleeAttack();
+        }*/
 
         //ANIMATION
 
@@ -199,10 +269,6 @@ public class Player : MonoBehaviour
         anim.SetBool("WALL SLIDE", isWallSliding == true);
     }
 
-    private void BowShot()
-    {
-        Instantiate(arrowPrefab, bowPos.position, bowPos.rotation);
-    }
     private void Jump()
     {
         rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
@@ -257,8 +323,14 @@ public class Player : MonoBehaviour
 
     void MeleeAttack()
     {
+        animStopper = true;
+
         //Animation
-        anim.SetTrigger("MELEE ATTACK");
+        if (animStopper)
+        {
+            anim.SetTrigger("MELEE ATTACK");
+            animStopper = false;
+        }
 
         //Enemy detection
         Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
@@ -267,8 +339,24 @@ public class Player : MonoBehaviour
         foreach (Collider2D enemy in enemiesHit)
         {
             //Debug.Log($"{enemy.name} hit");
-            enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+            enemy.GetComponent<HealthSystem>().DealDamage(meleeDamage, gameObject.transform);
         }
+    }
+
+    private void BowShot()
+    {
+        animStopper = true;
+
+        //ANIMATION
+        if (animStopper)
+        {
+            anim.SetTrigger("BOW SHOT");
+            animStopper = false;
+        }
+
+        GameObject arrowObject = Instantiate(arrowPrefab, bowPos.position, bowPos.rotation);
+        Arrow arrow = arrowObject.GetComponent<Arrow>();
+        arrow.SetDirection(isFacingRight ? Vector2.right : Vector2.left);
     }
 
     void OnDrawGizmosSelected()
