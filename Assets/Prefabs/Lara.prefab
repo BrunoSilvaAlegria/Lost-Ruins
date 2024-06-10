@@ -232,7 +232,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: f5573f26ce1df034cb52557d7bccccf8, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -1137,9 +1137,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d0e31036aeb2bf479e7d6941481498b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSound: {fileID: 0}
-  jumpSound: {fileID: 0}
-  hurtSnd: {fileID: 0}
+  walkSound: {fileID: 8734785289250130987}
+  jumpSound: {fileID: 8439702759025974006}
+  hurtSnd: {fileID: 7805009011656327898}
+  bowSound: {fileID: 4514759465820220958}
   moveSpeed: 200
   jumpSpeed: 200
   groundCheck: {fileID: 3505595515335784472}
