@@ -3615,7 +3615,7 @@ PlatformEffector2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 537545976}
-  m_Enabled: 0
+  m_Enabled: 1
   m_UseColliderMask: 1
   m_ColliderMask:
     serializedVersion: 2
@@ -5070,6 +5070,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6160340122002900680, guid: 3bd3938d543b7234d9b4377eca2b960f, type: 3}
+      propertyPath: hurtSnd
+      value: 
+      objectReference: {fileID: 1126251864}
+    - target: {fileID: 6160340122002900680, guid: 3bd3938d543b7234d9b4377eca2b960f, type: 3}
+      propertyPath: jumpSound
+      value: 
+      objectReference: {fileID: 1126251865}
+    - target: {fileID: 6160340122002900680, guid: 3bd3938d543b7234d9b4377eca2b960f, type: 3}
+      propertyPath: walkSound
+      value: 
+      objectReference: {fileID: 1126251866}
+    - target: {fileID: 6160340122002900680, guid: 3bd3938d543b7234d9b4377eca2b960f, type: 3}
       propertyPath: wallCheck
       value: 
       objectReference: {fileID: 1126251863}
@@ -5141,6 +5153,10 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8734785289250130987, guid: 3bd3938d543b7234d9b4377eca2b960f, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 0fe6f81d4d42b2b4fac731f6a2587db5, type: 3}
     - target: {fileID: 8970758743251708717, guid: 3bd3938d543b7234d9b4377eca2b960f, type: 3}
       propertyPath: m_Name
       value: Lara
@@ -5157,6 +5173,21 @@ PrefabInstance:
 --- !u!4 &1126251863 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5175861764838006848, guid: 3bd3938d543b7234d9b4377eca2b960f, type: 3}
+  m_PrefabInstance: {fileID: 1126251862}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1126251864 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 7805009011656327898, guid: 3bd3938d543b7234d9b4377eca2b960f, type: 3}
+  m_PrefabInstance: {fileID: 1126251862}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1126251865 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 8439702759025974006, guid: 3bd3938d543b7234d9b4377eca2b960f, type: 3}
+  m_PrefabInstance: {fileID: 1126251862}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1126251866 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 8734785289250130987, guid: 3bd3938d543b7234d9b4377eca2b960f, type: 3}
   m_PrefabInstance: {fileID: 1126251862}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1130878775
