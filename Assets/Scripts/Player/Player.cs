@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     [SerializeField] private AudioSource walkSound;
     [SerializeField] private AudioSource jumpSound;
     [SerializeField] private AudioSource hurtSnd;
+    [SerializeField] private AudioSource bowSound;
 
     //MOVEMENT
     [Header("Horizontal Movement")]
@@ -355,6 +356,7 @@ public class Player : MonoBehaviour
         //ANIMATION
         if (animStopper)
         {
+            bowSound.Play();
             anim.SetTrigger("BOW SHOT");
             animStopper = false;
         }
