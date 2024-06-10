@@ -1,22 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField] private Player     playerPrefab;
+    [SerializeField] private Player playerPrefab;
     [SerializeField] private Checkpoint activeCheckpoint;
 
-    Player  player;
+    Player player;
 
-    static LevelManager _Instance = null;
-    public static LevelManager Instance => _Instance;
+    static LevelManager _instance = null;
+    public static LevelManager instance => _instance;
 
     private void Awake()
     {
-        if (_Instance == null)
+        if (_instance == null)
         {
-            _Instance = this;
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -49,7 +51,6 @@ public class LevelManager : MonoBehaviour
                 {
                     objectFollow.objectToFollow = player.transform;
                 }
-
             }
         }
     }
@@ -62,5 +63,10 @@ public class LevelManager : MonoBehaviour
         }
         activeCheckpoint = checkpoint;
         activeCheckpoint.EnableCheckpoint(true);
+    }
+
+    public void NextLevel()
+    {
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }

@@ -1,23 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows;
 
-public class Bullet : MonoBehaviour
+public class Arrow : MonoBehaviour
 {
-    // Start is called before the first frame update
-    [SerializeField] private float bulletSpeed = 20f;
+    [SerializeField] private float arrowSpeed = 20f;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private int damage = 1;
-    [SerializeField] GameObject player;
+    [SerializeField] GameObject enemy;
 
 
     public void SetDirection(Vector2 direction)
     {
-        rb.velocity = direction * bulletSpeed;
+        rb.velocity = direction * arrowSpeed;
         if (direction.x < 0)
         {
             //Flip the sprite horinzontally if moving left
-            transform.localScale = new Vector3(-1, transform.localScale.y, transform.localScale.z);
+            transform.localScale = new Vector3(-1,transform.localScale.y, transform.localScale.z);
         }
         else
         {
@@ -26,13 +26,19 @@ public class Bullet : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+ 
+    }
+
     private void OnTriggerEnter2D(Collider2D hitInfo)
     {
-        HealthSystem playerHealth = hitInfo.GetComponent<HealthSystem>();
-        if (playerHealth != null)
+        HealthSystem enemyHealth = hitInfo.GetComponent<HealthSystem>();
+        if (enemyHealth != null)
         {
-            playerHealth.DealDamage(damage, player.transform);
-            Destroy(gameObject);
+            enemyHealth.DealDamage(damage, enemy.transform);
+            //Debug.Log ($"{gameObject.name} hit");
         }
+        Destroy(gameObject);
     }
 }

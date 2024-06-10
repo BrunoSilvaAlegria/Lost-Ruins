@@ -43,7 +43,7 @@ public class TouchDamage : MonoBehaviour
         if (otherHealthSystem == null) otherHealthSystem = collider.GetComponentInParent<HealthSystem>();
         if (otherHealthSystem != null)
         {
-            Debug.Log($"Collided with health system  - {name}/{collider.name}");
+            //Debug.Log($"Collided with health system  - {name}/{collider.name}");
             if (faction.IsHostile(otherHealthSystem.faction))
             {
                 if (directionalAttack)
@@ -52,7 +52,6 @@ public class TouchDamage : MonoBehaviour
                     float dp = Vector2.Dot(normalizedDirection, hitDirection);
                     float angle = Mathf.Acos(dp) * Mathf.Rad2Deg;
 
-                    Debug.Log($"{name} hit {otherHealthSystem.name} at a {angle} angle");
                     if (angle >= angleTolerance) return;
 
                     if (thisRigidBody)

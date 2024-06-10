@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using static UnityEditor.Searcher.SearcherWindow.Alignment;
+using TMPro;
 
 public class PlayerProf : MonoBehaviour
 {
@@ -22,51 +22,62 @@ public class PlayerProf : MonoBehaviour
     [SerializeField]
     private LayerMask groundCheckLayers;
     [SerializeField]
-    private Transform wallCheck;
-    [SerializeField]
-    private float wallCheckRadius = 2;
-    [SerializeField]
-    private LayerMask wallCheckLayers;
-    [SerializeField]
     private float blinkDuration = 0.1f;
     [SerializeField]
-    private float wallJumpingTime = 0.2f;
+    private float velocityPerDamage = 100.0f;
+    [SerializeField]
+    private float maxKnockbackVelocity = 200.0f;
+    [SerializeField]
+    private float timeScaleDuration = 0.1f;
+    [SerializeField]
+    private AudioSource hurtSnd;
+    [SerializeField]
+    private float interactionRadius = 40.0f;
+    [SerializeField]
+    private LayerMask interactionMask;
+    [SerializeField]
+    private TextMeshProUGUI interactionText;
 
     private Rigidbody2D     rb;
     private SpriteRenderer  sr;
-    private Animator        animator;
+    private Animator        animator; 
     private float           defaultGravity;
     private float           jumpTime;
     private HealthSystem    hs;
     private float           blinkTimer;
-    private float           deltaX;
-
-
-    private bool            isWallJumping;
-    private float           wallJumpingDirection;
-    private float           wallJumpingCounter;
-    private float           wallJumpingDuration = 0.4f;
-    private Vector2         wallJumpPower = new Vector2(8f, 16f);
-
-    private bool            isWallSliding;
-    private float           wallSlidingSpeed;
-
-    private bool            isFacingRight = true;
+    private bool            inputEnable = true;
+    private bool            collisionEnable = true;
 
     // Start is called before the first frame update
-    private void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         hs = GetComponent<HealthSystem>();
 
-        hs.onInvulnerabilityToggle += ToggleInvulnerability;
-        hs.onDeath += PlayerDied;
-
         defaultGravity = rb.gravityScale;
     }
 
+    private void Start()
+    {
+        hs.onDamage += PlayerTookDamage;
+        hs.onInvulnerabilityToggle += ToggleInvulnerability;
+        hs.onDeath += PlayerDied;
+
+        TouchDamage touchDamage = GetComponent<TouchDamage>();
+        if (touchDamage != null)
+        {
+            touchDamage.onDamage += OnCrushEnemy;
+        }
+    }
+
+    void OnCrushEnemy(int damage, HealthSystem target)
+    {
+        Vector2 velocity = rb.velocity;
+        velocity.y = jumpSpeed * 0.5f;
+        rb.velocity = velocity;
+    }
 
     private void OnDestroy()
     {
@@ -92,7 +103,70 @@ public class PlayerProf : MonoBehaviour
 
     void PlayerDied()
     {
+        StartCoroutine(PlayerDiedCR());
+    }
+
+    IEnumerator PlayerDiedCR()
+    {
+        collisionEnable = false;
+        inputEnable = false;
+        rb.velocity = new Vector2(0, jumpSpeed * 0.5f);
+        animator.SetTrigger("isDead");
+
+        ObjectFollow objectFollow = FindObjectOfType<ObjectFollow>();
+        if (objectFollow.objectToFollow == transform)
+        {
+            objectFollow.objectToFollow = null;
+        }
+
+        float timer = 0.0f;
+        while (timer < 1.5f)
+        {
+            timer += Time.deltaTime;
+
+            float t = timer / 1.5f;
+            transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * 5, Mathf.Sqrt(t));
+            yield return null;
+        }
+
         Destroy(gameObject);
+    }
+
+    void PlayerTookDamage(int damage, Transform damageSource)
+    {
+        if (hs.isDead) return;
+
+        StartCoroutine(PlayerTookDamageCR(damage, damageSource));
+    }
+
+    IEnumerator PlayerTookDamageCR(int damage, Transform damageSource)
+    {
+        // Passo 0: Tocar o som
+        if (hurtSnd != null) hurtSnd.Play();
+        // Passo 1: Mudar a velocidade para o knockback
+        float velocityX = Mathf.Clamp(damage * velocityPerDamage, 0.0f, maxKnockbackVelocity);
+        float velocityY = velocityX * 2.0f;
+        if (damageSource.position.x > transform.position.x) velocityX = -velocityX;
+        rb.velocity = new Vector2(velocityX, velocityY);
+        // Passo 2: Desactivar o input
+        inputEnable = false;
+        // Passo 2.5: Stutter
+        if (timeScaleDuration > 0)
+        {
+            Time.timeScale = 0.001f;
+            yield return new WaitForSecondsRealtime(timeScaleDuration);
+            Time.timeScale = 1.0f;
+        }
+        // Passo 3: Esperar X tempo
+        //yield return new WaitForSeconds(knockbackTime);
+
+        yield return new WaitForSeconds(0.1f);
+        while (!IsGrounded())
+        {
+            yield return null;
+        }
+        // Passo 4: Activar o input
+        inputEnable = true;
     }
 
     // Update is called once per frame
@@ -110,135 +184,83 @@ public class PlayerProf : MonoBehaviour
             }
         }
 
-        airCollider.enabled = !isGrounded;
-        groundCollider.enabled = isGrounded;
-
-        deltaX = Input.GetAxis("Horizontal");
-        //        Vector3 moveVector = new Vector3(deltaX * moveSpeed * Time.deltaTime, 0, 0);
-        //        transform.position = transform.position + moveVector;
+        airCollider.enabled = !isGrounded && collisionEnable;
+        groundCollider.enabled = isGrounded && collisionEnable;
 
         Vector3 currentVelocity = rb.velocity;
 
-        currentVelocity.x = deltaX * moveSpeed;
-
-        if ((Input.GetButtonDown("Jump")) && (isGrounded))
+        if (inputEnable)
         {
-            currentVelocity.y = jumpSpeed;
-            rb.gravityScale = 1.0f;
-            jumpTime = Time.time;
+            float deltaX = Input.GetAxis("Horizontal");
+            //        Vector3 moveVector = new Vector3(deltaX * moveSpeed * Time.deltaTime, 0, 0);
+            //        transform.position = transform.position + moveVector;
 
-            rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
-        }
-        else if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
-        {
-            rb.velocity = new Vector2 (rb.velocity.x, rb.velocity.y * 0.5f);
-        }
-        else if ((Input.GetButton("Jump")) && ((Time.time - jumpTime) < maxJumpTime))
-        {
-            rb.gravityScale = 1.0f;
-        }
-        else
-        {
-            rb.gravityScale = defaultGravity;
+            currentVelocity.x = deltaX * moveSpeed;
+
+            if ((Input.GetButtonDown("Jump")) && (isGrounded))
+            {
+                currentVelocity.y = jumpSpeed;
+                rb.gravityScale = 1.0f;
+                jumpTime = Time.time;
+            }
+            else if ((Input.GetButton("Jump")) && ((Time.time - jumpTime) < maxJumpTime))
+            {
+                rb.gravityScale = 1.0f;
+            }
+            else
+            {
+                rb.gravityScale = defaultGravity;
+            }
+
+            rb.velocity = currentVelocity;
+
+            // Animation
+            animator.SetFloat("AbsVelocityX", Mathf.Abs(currentVelocity.x));
+
+            if ((currentVelocity.x < 0) && (transform.right.x > 0)) transform.rotation = Quaternion.Euler(0, 180, 0);
+            else if ((currentVelocity.x > 0) && (transform.right.x < 0)) transform.rotation = Quaternion.identity;
         }
 
-        rb.velocity = currentVelocity;
+        animator.SetFloat("VelocityY", currentVelocity.y);
+        animator.SetBool("isGrounded", isGrounded);
 
-        WallSlide();
-        WallJump();
-        
-        if (!isWallJumping)
-        {
-            Flip();
-        }
-
-        // Animation
-        animator.SetFloat("AbsoluteVelX", Mathf.Abs(currentVelocity.x));
-
-        if ((currentVelocity.x < 0) && (transform.right.x > 0)) transform.rotation = Quaternion.Euler(0, 180, 0);
-        else if ((currentVelocity.x > 0) && (transform.right.x < 0)) transform.rotation = Quaternion.identity;
+        //UseMechanic();
     }
 
-    private void FixedUpdate()
-    {
-        if (!isWallJumping)
+    /*void UseMechanic()
+    { 
+        bool         canInteract = false;
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, interactionRadius, interactionMask);
+        foreach (var collider in colliders)
         {
-            rb.velocity = new Vector2(deltaX * jumpSpeed, rb.velocity.y);
+            Interactable interactable = collider.GetComponent<Interactable>();
+            if (interactable)
+            {
+                if (interactable.CanInteract(this))
+                {
+                    if (Input.GetButtonDown("Use"))
+                    {
+                        interactable.Interact(this);
+                    }
+
+                    interactionText.text = interactable.displayText;
+                    canInteract = true;
+                }
+            }
         }
-    }
+
+        if (!canInteract)
+        {
+            interactionText.text = "";
+        }
+        interactionText.transform.rotation = Quaternion.identity;
+    }*/
 
     private bool IsGrounded()
     {
         Collider2D collider = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundCheckLayers);
 
         return (collider != null);
-    }
-
-    private bool IsWalled()
-    {
-        return Physics2D.OverlapCircle(wallCheck.position, 0.2f, wallCheckLayers);
-    }
-
-    private void WallSlide()
-    {
-        if (IsWalled() && !IsGrounded() && deltaX != 0f)
-        {
-            isWallSliding = true;
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
-        }
-        else
-        {
-            isWallSliding = false;
-        }
-    }
-
-    private void WallJump()
-    {
-        if (isWallSliding)
-        {
-            isWallJumping = false;
-            wallJumpingDirection = -transform.localScale.x;
-            wallJumpingCounter = wallJumpingTime;
-
-            CancelInvoke(nameof(StopWallJumping));
-        }
-        else
-        {
-            wallJumpingCounter -= Time.deltaTime;
-        }
-
-        if (Input.GetButtonDown("Jump") && wallJumpingCounter > 0f)
-        {
-            isWallJumping = true;
-            rb.velocity = new Vector2(wallJumpingDirection * wallJumpPower.x, wallJumpPower.y);
-            wallJumpingCounter = 0f;
-
-            if (transform.localScale.x != wallJumpingDirection)
-            {
-                isFacingRight = !isFacingRight;
-                Vector3 localScale = transform.localScale;
-                localScale.x *= -1f;
-                transform.localScale = localScale;
-            }
-
-            Invoke(nameof(StopWallJumping), wallJumpingDuration);
-        }
-    }
-
-    private void StopWallJumping()
-    {
-        isWallJumping = false;
-    }
-
-    private void Flip()
-    {
-        if (isFacingRight && deltaX < 0f || !isFacingRight && deltaX > 0f)
-        {
-            isFacingRight = !isFacingRight;
-            Vector3 localScale = transform.localScale;
-            localScale.x *= -1f;
-            transform.localScale = localScale;
-        }
     }
 
     private void OnDrawGizmosSelected()
@@ -248,10 +270,8 @@ public class PlayerProf : MonoBehaviour
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(groundCheck.position, groundCheckRadius);
         }
-        else if (wallCheck != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(wallCheck.position, wallCheckRadius);
-        }
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, interactionRadius);
     }
 }

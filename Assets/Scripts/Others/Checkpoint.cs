@@ -6,7 +6,6 @@ public class Checkpoint : MonoBehaviour
 {
     [SerializeField] private ParticleSystem onPS;
     [SerializeField] private ParticleSystem offPS;
-
     bool active = false;
 
     // Start is called before the first frame update
@@ -18,22 +17,24 @@ public class Checkpoint : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    public void EnableCheckpoint(bool b)
+    public void EnableCheckpoint(bool state)
     {
-        active = b;
+   
+        active = state;
+        //Debug.Log($"Checkpoint {this} enable state: {active}");
 
         if (onPS)
         {
             var emissionModule = onPS.emission;
-            emissionModule.enabled = b;
+            emissionModule.enabled = active;
         }
         if (offPS)
         {
             var emissionModule = offPS.emission;
-            emissionModule.enabled = !b;
+            emissionModule.enabled = !active;
         }
     }
 
@@ -43,7 +44,7 @@ public class Checkpoint : MonoBehaviour
         if (player == null) player = collider.GetComponentInParent<Player>();
         if (player != null)
         {
-            LevelManager.Instance.SetCheckpoint(this);
+            LevelManager.instance.SetCheckpoint(this);
         }
     }
 }

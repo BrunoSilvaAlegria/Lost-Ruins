@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
 
     //AUDIO
     [Header("Audio")]
+    [SerializeField] private AudioSource walkSound;
+    [SerializeField] private AudioSource jumpSound;
     [SerializeField] private AudioSource hurtSnd;
 
     //MOVEMENT
@@ -202,12 +204,14 @@ public class Player : MonoBehaviour
 
         if (hzInput < 0f)
         {
+            walkSound.Play();
             isFacingRight = false;
             transform.localScale = new Vector2 (-1f, transform.localScale.y);
         }
 
         else if (hzInput > 0f)
         {
+            walkSound.Play();
             isFacingRight = true;
             transform.localScale = new Vector2(1f, transform.localScale.y);
         }
@@ -271,6 +275,7 @@ public class Player : MonoBehaviour
 
     private void Jump()
     {
+        jumpSound.Play();
         rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
 
         if (isGrounded) anim.SetTrigger("JUMP");
