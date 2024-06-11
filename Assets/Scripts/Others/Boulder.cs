@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class RopePointDetection : MonoBehaviour
+public class Boulder :MonoBehaviour
 {
-    private Rigidbody2D rb;
+    Rigidbody2D rb;
     private LineRenderer lineRend;
     private DistanceJoint2D distJoint;
-    private RopePoint selectedPoint;
+    private Node selectedNode;
 
-    public static RopePointDetection instance;
+    public static Boulder instance;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,13 +20,13 @@ public class RopePointDetection : MonoBehaviour
 
         lineRend.enabled = false;
         distJoint.enabled = false;
-        selectedPoint = null;
+        selectedNode = null;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(selectedPoint == null)
+        if(selectedNode == null)
         {
             lineRend.enabled = false;
             distJoint.enabled = false;
@@ -37,17 +37,17 @@ public class RopePointDetection : MonoBehaviour
         lineRend.enabled = true;
         distJoint.enabled = true;
 
-        distJoint.connectedBody = selectedPoint.GetComponent<Rigidbody2D>();
+        distJoint.connectedBody = selectedNode.GetComponent<Rigidbody2D>();
     }
 
-    public void SelectNode(RopePoint node)
+    public void SelectNode(Node node)
     {
-        selectedPoint = node;
+        selectedNode = node;
     }
 
     public void DeselectNode()
     {
-        selectedPoint = null;
+        selectedNode = null;
     }
 
 

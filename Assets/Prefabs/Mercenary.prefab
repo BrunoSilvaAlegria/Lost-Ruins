@@ -12,10 +12,11 @@ GameObject:
   - component: {fileID: 5466191118379109334}
   - component: {fileID: 1603161825453517414}
   - component: {fileID: 6160439200901263960}
-  - component: {fileID: 4876539025578573488}
+  - component: {fileID: 7248699022574550116}
   - component: {fileID: 513186848263379121}
   - component: {fileID: -1739915900040135639}
   - component: {fileID: 5574315431619500755}
+  - component: {fileID: 7207699630593068169}
   m_Layer: 9
   m_Name: Mercenary
   m_TagString: Untagged
@@ -141,8 +142,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!61 &4876539025578573488
-BoxCollider2D:
+--- !u!60 &7248699022574550116
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -173,7 +174,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.9256134, y: -0.29105282}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -183,9 +184,29 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 16.408966, y: 31.417894}
-  m_EdgeRadius: 0
+  m_Points:
+    m_Paths:
+    - - {x: -4.0150223, y: 14.100468}
+      - {x: -5.3190117, y: 13.067837}
+      - {x: -5.216839, y: 9.244274}
+      - {x: -7.636627, y: 9.101555}
+      - {x: -6.9471817, y: -16}
+      - {x: 6.5753517, y: -16.06784}
+      - {x: 6.508049, y: -14.136524}
+      - {x: 4.361603, y: -12.442026}
+      - {x: 4.1930428, y: -8.5299015}
+      - {x: 3.929512, y: -4.582119}
+      - {x: 2.5083885, y: -1.2154427}
+      - {x: 8.56115, y: -2.3742409}
+      - {x: 8.439674, y: -0.1657219}
+      - {x: 5.590374, y: 1.9823914}
+      - {x: 0.24197388, y: 6.328949}
+      - {x: 1.2155342, y: 7.7956085}
+      - {x: 2.2197685, y: 10.139534}
+      - {x: 1.9492416, y: 13.321091}
+      - {x: 1.234333, y: 13.3085785}
+      - {x: 1.1683083, y: 14.236149}
+  m_UseDelaunayMesh: 0
 --- !u!114 &513186848263379121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,6 +262,30 @@ MonoBehaviour:
   _faction: 2
   maxHealth: 2
   invulnerabilityDuration: 0
+--- !u!114 &7207699630593068169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2659119669068661104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f210f7fe22fa4c4f87d94d1677c71a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 3430174437085088310, guid: 020424f8635c15c42a5a1169f5375967, type: 3}
+  gunPos: {fileID: 5266679159290503701}
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  onPlayerDetected:
+    m_PersistentCalls:
+      m_Calls: []
+  detectionRadius: 1
+  shootInterval: 2
+  color: {r: 0, g: 1, b: 0, a: 1}
+  showGizmos: 1
 --- !u!1 &4583995316331895649
 GameObject:
   m_ObjectHideFlags: 0

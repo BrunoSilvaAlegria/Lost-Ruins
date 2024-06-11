@@ -907,10 +907,9 @@ GameObject:
   - component: {fileID: 6685607396175283605}
   - component: {fileID: 8448682652178586388}
   - component: {fileID: 6160340122002900680}
-  - component: {fileID: 2855696951948459123}
+  - component: {fileID: 969924016575484677}
   - component: {fileID: 6714827828820309694}
   - component: {fileID: 4970023555084177631}
-  - component: {fileID: -296361453773103833}
   - component: {fileID: 4185774446269935144}
   - component: {fileID: 5685905307768390234}
   m_Layer: 8
@@ -1142,7 +1141,7 @@ MonoBehaviour:
   hurtSnd: {fileID: 7805009011656327898}
   bowSound: {fileID: 4514759465820220958}
   moveSpeed: 200
-  jumpSpeed: 200
+  jumpSpeed: 225
   groundCheck: {fileID: 3505595515335784472}
   groundLayer:
     serializedVersion: 2
@@ -1170,7 +1169,7 @@ MonoBehaviour:
   velocityPerDamage: 50
   maxKnockbackVelocity: 50
   timeScaleDuration: 0.1
---- !u!114 &2855696951948459123
+--- !u!114 &969924016575484677
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1179,12 +1178,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8970758743251708717}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5492de0a9d8eb64d85c77459ec11685, type: 3}
+  m_Script: {fileID: 11500000, guid: e22009014404b9346a8186de5ce9b7f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 0}
-  _lineRenderer: {fileID: 4970023555084177631}
-  _distanceJoint: {fileID: 6714827828820309694}
+  grappleLength: 2
+  grappleLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  rope: {fileID: 4970023555084177631}
 --- !u!232 &6714827828820309694
 DistanceJoint2D:
   m_ObjectHideFlags: 0
@@ -1308,18 +1309,6 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &-296361453773103833
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8970758743251708717}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33956b24a88d8c84ea2d9b3229411bca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4185774446269935144
 MonoBehaviour:
   m_ObjectHideFlags: 0

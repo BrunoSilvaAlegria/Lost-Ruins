@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 902244599793666505}
   - component: {fileID: 3429296033363435515}
   - component: {fileID: 2143504544420276601}
-  - component: {fileID: 6191618422932305447}
+  - component: {fileID: 4407851420605950703}
   m_Layer: 0
   m_Name: Point
-  m_TagString: Untagged
+  m_TagString: Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 262.2, y: 88.5, z: 2.8602483}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -121,7 +121,7 @@ CircleCollider2D:
   m_Offset: {x: -4.0391607, y: -2.790697}
   serializedVersion: 2
   m_Radius: 100
---- !u!114 &6191618422932305447
+--- !u!114 &4407851420605950703
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,6 +130,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 8680129516191528453}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51f5158b93bd9994fa39fbfcdc0376be, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c936b569926d5043a7bc0c85d978639, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
